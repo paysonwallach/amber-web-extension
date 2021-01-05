@@ -1,0 +1,3 @@
+interface StringConstructor {
+    Empty: string
+}

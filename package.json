@@ -1,0 +1,127 @@
+{
+  "name": "amber-web-extension",
+  "description": "Serializable browsing sessions.",
+  "license": "GPL-3.0",
+  "author": "Payson Wallach <payson@paysonwallach.com>",
+  "homepage": "https://github.com/paysonwallach/amber-web-extension#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paysonwallach/amber-web-extension"
+  },
+  "bugs": {
+    "url": "https://github.com/paysonwallach/amber-web-extension/issues"
+  },
+  "version": "0.1.0",
+  "scripts": {
+    "build": "run-p build:chrome build:firefox build:opera",
+    "build:chrome": "cross-env NODE_ENV=production cross-env TARGET_BROWSER=chrome webpack",
+    "build:firefox": "cross-env NODE_ENV=production cross-env TARGET_BROWSER=firefox webpack",
+    "build:opera": "cross-env NODE_ENV=production cross-env TARGET_BROWSER=opera webpack",
+    "dev:chrome": "cross-env NODE_ENV=development cross-env TARGET_BROWSER=chrome webpack --watch",
+    "dev:firefox": "cross-env NODE_ENV=development cross-env TARGET_BROWSER=firefox webpack --watch",
+    "dev:opera": "cross-env NODE_ENV=development cross-env TARGET_BROWSER=opera webpack --watch",
+    "format": "run-p format:*",
+    "format:js": "eslint --fix .",
+    "format:package.json": "prettier-package-json --write",
+    "prerelease": "scrivano",
+    "release": "run-s build standard-version release:*",
+    "release:amo": "web-ext-submit --source-dir distribution",
+    "release:cws": "webstore upload --source=distribution --auto-publish",
+    "test": "run-s format:* build",
+    "watch": "webpack --mode=development --watch"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.13",
+    "dexie": "^3.0.3",
+    "js-yaml": "^4.0.0",
+    "loglevel": "^1.7.1",
+    "loglevel-plugin-prefix": "^0.8.4",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "tslib": "^2.1.0",
+    "typescript-json-serializer": "^3.0.0",
+    "webext-options-sync": "^2.0.1",
+    "webextension-polyfill-ts": "^0.24.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.13",
+    "@babel/plugin-proposal-class-properties": "^7.12.13",
+    "@babel/plugin-proposal-decorators": "^7.12.13",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.13",
+    "@babel/plugin-transform-runtime": "^7.12.13",
+    "@babel/preset-env": "^7.12.13",
+    "@babel/preset-react": "^7.12.13",
+    "@babel/preset-typescript": "^7.12.13",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@types/js-yaml": "^4.0.0",
+    "@types/react": "^17.0.1",
+    "@types/react-dom": "^17.0.0",
+    "@types/uuid": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.14.2",
+    "@typescript-eslint/parser": "^4.14.2",
+    "autoprefixer": "^10.2.4",
+    "babel-loader": "^8.2.2",
+    "babel-plugin-parameter-decorator": "^1.0.16",
+    "babel-plugin-transform-typescript-metadata": "^0.3.1",
+    "chrome-webstore-upload-cli": "^1.2.1",
+    "copy-webpack-plugin": "^7.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^5.0.1",
+    "eslint": "^7.19.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "husky": "^4.3.8",
+    "mini-css-extract-plugin": "^1.3.5",
+    "node-sass": "^5.0.0",
+    "npm-run-all": "^4.1.5",
+    "optimize-css-assets-webpack-plugin": "^5.0.4",
+    "postcss": "^8.2.4",
+    "postcss-loader": "^5.0.0",
+    "prettier": "^2.2.1",
+    "prettier-package-json": "^2.1.3",
+    "resolve-url-loader": "^3.1.2",
+    "sass-loader": "^10.1.1",
+    "scrivano": "^0.1.0",
+    "size-plugin": "^3.0.0",
+    "standard-version": "^9.1.0",
+    "terser-webpack-plugin": "^5.1.1",
+    "ts-loader": "^8.0.14",
+    "typescript": "^4.1.3",
+    "web-ext": "^5.5.0",
+    "webpack": "^5.20.1",
+    "webpack-cli": "^4.5.0",
+    "wext-manifest-loader": "^2.2.1",
+    "wext-manifest-webpack-plugin": "^1.2.1",
+    "zip-webpack-plugin": "^4.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "npm run format"
+    }
+  },
+  "meta": {
+    "title": "Amber Web Extension",
+    "repository": {
+      "owner": "paysonwallach",
+      "name": "amber-web-extension"
+    },
+    "license": {
+      "name": "GNU General Public License v3.0",
+      "url": "https://github.com/paysonwallach/amber-web-extension/blob/master/LICENSE"
+    },
+    "codeOfConduct": {
+      "url": "https://github.com/paysonwallach/amber-web-extension/blob/master/CODE_OF_CONDUCT.md"
+    },
+    "releases": {
+      "url": "https://github.com/paysonwallach/amber-web-extension/releases"
+    }
+  },
+  "standard-version": {
+    "scripts": {
+      "precommit": "npm run prerelease"
+    }
+  }
+}

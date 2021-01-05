@@ -1,0 +1,112 @@
+body {
+  color: #0c0c0d;
+  background-color: #fff;
+  margin: 8px;
+  font-family: sans-serif;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+label,
+textarea {
+  font-size: 10pt;
+}
+
+input,
+textarea {
+  margin: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 4px;
+  vertical-align: middle;
+}
+
+.button {
+  margin: 4px;
+  margin-bottom: 8px;
+  float: right;
+  border-radius: 4px;
+  height: 32px;
+  line-height: 24pt;
+  padding: 0 8px;
+  border: none;
+  background: #0060df;
+  color: #fff;
+  transition: 0.2s all ease-in-out;
+  min-width: 72px;
+  text-align: center;
+  font-size: 10pt;
+}
+
+.button:hover {
+  background: #003eaa;
+}
+
+.button:active {
+  color: #002275;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+#activity-indicator {
+  visibility: hidden;
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.circular{
+  animation: rotate 2s linear infinite;
+  height: 100px;
+  position: relative;
+  width: 100px;
+}
+
+.path {
+  stroke-dasharray: 1,200;
+  stroke-dashoffset: 0;
+  stroke: #0057e7;
+  animation:
+   dash 1.5s ease-in-out infinite,
+   color 6s ease-in-out infinite
+  ;
+  stroke-linecap: round;
+}
+
+@keyframes rotate{
+ 100%{
+  transform: rotate(360deg);
+ }
+}
+@keyframes dash{
+ 0%{
+  stroke-dasharray: 1,200;
+  stroke-dashoffset: 0;
+ }
+ 50%{
+  stroke-dasharray: 89,200;
+  stroke-dashoffset: -35;
+ }
+ 100%{
+  stroke-dasharray: 89,200;
+  stroke-dashoffset: -124;
+ }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #fff;
+    background-color: #202023;
+  }
+
+  textarea {
+    color: #fff;
+    background-color: #292932;
+  }
+}
