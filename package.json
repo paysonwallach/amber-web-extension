@@ -41,7 +41,7 @@
     "tslib": "^2.1.0",
     "typescript-json-serializer": "^3.0.0",
     "webext-options-sync": "^2.0.1",
-    "webextension-polyfill-ts": "^0.22.0"
+    "webextension-polyfill-ts": "^0.24.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
@@ -68,7 +68,7 @@
     "copy-webpack-plugin": "^6.4.1",
     "cross-env": "^7.0.3",
     "css-loader": "^5.0.1",
-    "eslint": "^7.18.0",
+    "eslint": "^7.19.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.22.0",
