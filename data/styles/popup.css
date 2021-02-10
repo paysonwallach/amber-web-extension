@@ -21,7 +21,7 @@ textarea {
   vertical-align: middle;
 }
 
-.button {
+input[type="submit"] {
   margin: 4px;
   margin-bottom: 8px;
   float: right;
@@ -36,13 +36,14 @@ textarea {
   min-width: 72px;
   text-align: center;
   font-size: 10pt;
+  cursor: pointer;
 }
 
-.button:hover {
+input[type="submit"]:hover {
   background: #003eaa;
 }
 
-.button:active {
+input[type="submit"]:active {
   color: #002275;
 }
 

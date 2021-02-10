@@ -19,7 +19,7 @@ export class SessionForm extends React.Component<SessionFormIProps, {}> {
                     />
                 </label>
                 <br />
-                <input className="button" type="submit" value="Save" />
+                <input type="submit" value="Save" />
             </form>
         )
     }
