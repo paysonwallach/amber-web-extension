@@ -41,7 +41,7 @@
     "tslib": "^2.1.0",
     "typescript-json-serializer": "^3.0.0",
     "webext-options-sync": "^2.0.1",
-    "webextension-polyfill-ts": "^0.24.0"
+    "webextension-polyfill-ts": "^0.25.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
