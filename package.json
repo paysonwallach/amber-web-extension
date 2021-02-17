@@ -85,7 +85,7 @@
     "sass-loader": "^11.0.1",
     "scrivano": "^0.1.0",
     "size-plugin": "^3.0.0",
-    "standard-version": "^9.1.0",
+    "standard-version": "^9.1.1",
     "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^8.0.17",
     "typescript": "^4.1.5",
