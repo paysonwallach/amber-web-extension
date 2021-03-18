@@ -40,7 +40,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "tslib": "^2.1.0",
-    "typescript-json-serializer": "^3.2.1",
+    "typescript-json-serializer": "^3.2.2",
     "webext-options-sync": "^2.0.1",
     "webextension-polyfill-ts": "^0.25.0"
   },
