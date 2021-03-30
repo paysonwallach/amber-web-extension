@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "amber-web-extension",
+  "version": "0.1.0",
   "description": "Serializable browsing sessions.",
   "license": "GPL-3.0",
   "author": "Payson Wallach <payson@paysonwallach.com>",
@@ -12,7 +13,6 @@
   "bugs": {
     "url": "https://github.com/paysonwallach/amber-web-extension/issues"
   },
-  "version": "0.1.0",
   "scripts": {
     "build": "run-p build:chrome build:firefox build:opera",
     "build:chrome": "cross-env NODE_ENV=production cross-env TARGET_BROWSER=chrome webpack",
@@ -24,6 +24,7 @@
     "format": "run-p format:*",
     "format:js": "eslint --fix .",
     "format:package.json": "prettier-package-json --write",
+    "prepare": "husky install",
     "prerelease": "scrivano",
     "release": "run-s build standard-version release:*",
     "release:amo": "web-ext-submit --source-dir distribution",
@@ -96,12 +97,6 @@
     "wext-manifest-loader": "^2.3.0",
     "wext-manifest-webpack-plugin": "^1.2.1",
     "zip-webpack-plugin": "^4.0.1"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "npm run format"
-    }
   },
   "meta": {
     "title": "Amber Web Extension",
