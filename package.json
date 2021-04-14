@@ -35,7 +35,7 @@
   "dependencies": {
     "@babel/runtime": "^7.13.10",
     "dexie": "^3.0.3",
-    "js-yaml": "^4.0.0",
+    "js-yaml": "^4.1.0",
     "loglevel": "^1.7.1",
     "loglevel-plugin-prefix": "^0.8.4",
     "react": "^17.0.2",
@@ -92,7 +92,7 @@
     "ts-loader": "^8.1.0",
     "typescript": "^4.2.4",
     "web-ext": "^6.0.0",
-    "webpack": "^5.32.0",
+    "webpack": "^5.33.2",
     "webpack-cli": "^4.6.0",
     "wext-manifest-loader": "^2.3.0",
     "wext-manifest-webpack-plugin": "^1.2.1",
