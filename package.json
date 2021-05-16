@@ -2,7 +2,7 @@
   "private": true,
   "name": "amber-web-extension",
   "version": "0.1.0",
-  "description": "Serializable browsing sessions.",
+  "description": "Bring the Unix philosophy to the browser.",
   "license": "GPL-3.0",
   "author": "Payson Wallach <payson@paysonwallach.com>",
   "homepage": "https://github.com/paysonwallach/amber-web-extension#readme",
