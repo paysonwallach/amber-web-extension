@@ -17,6 +17,8 @@
 
 ## Installation
 
+From a supported browser, download and install the [latest release](https://paysonwallach.com/amber/amber-1.20-fx.xpi).
+
 ### Dependencies
 
 This extension depends on [Amber Bridge](https://github.com/paysonwallach/amber-bridge#readme), and [Amber Helper](https://github.com/paysonwallach/amber-helper#readme), optionally.
