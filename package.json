@@ -86,7 +86,7 @@
     "resolve-url-loader": "^4.0.0",
     "sass-loader": "^12.1.0",
     "scrivano": "^0.1.0",
-    "size-plugin": "^3.0.0",
+    "size-plugin": "^2.0.2",
     "standard-version": "^9.3.0",
     "terser-webpack-plugin": "^5.1.4",
     "ts-loader": "^9.2.3",
