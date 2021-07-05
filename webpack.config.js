@@ -7,7 +7,6 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const SizePlugin = require("size-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const WextManifestWebpackPlugin = require("wext-manifest-webpack-plugin");
-const ZipPlugin = require("zip-webpack-plugin");
 
 const dataPath = path.join(__dirname, "data");
 const destPath = path.join(__dirname, "distribution");
@@ -15,17 +14,6 @@ const sourcePath = path.join(__dirname, "source");
 const stylesPath = path.join(dataPath, "styles");
 const viewsPath = path.join(dataPath, "views");
 const targetBrowser = process.env.TARGET_BROWSER;
-
-const getExtensionFileType = (browser) => {
-  switch (browser) {
-    case "opera":
-      return "crx";
-    case "firefox":
-      return "xpi";
-    default:
-      return "zip";
-  }
-};
 
 module.exports = {
   devtool: false, // https://github.com/webpack/webpack/issues/1194#issuecomment-560382342
@@ -141,11 +129,6 @@ module.exports = {
           preset: ["default", { discardComments: { removeAll: true } }],
         },
       }),
-      // new ZipPlugin({
-      //   path: destPath,
-      //   extension: `${getExtensionFileType(targetBrowser)}`,
-      //   filename: `${targetBrowser}`,
-      // }),
     ],
   },
 };

@@ -95,8 +95,7 @@
     "webpack": "^5.42.1",
     "webpack-cli": "^4.7.2",
     "wext-manifest-loader": "^2.3.0",
-    "wext-manifest-webpack-plugin": "^1.2.1",
-    "zip-webpack-plugin": "^4.0.1"
+    "wext-manifest-webpack-plugin": "^1.2.1"
   },
   "meta": {
     "title": "Amber Web Extension",
