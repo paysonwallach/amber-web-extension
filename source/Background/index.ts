@@ -219,14 +219,11 @@ backend.sessions.hook("creating", function (primKey, obj, transaction) {
 })
 backend.sessions.hook("updating", function (mods: any, primKey, obj, trans) {
     if (mods.hasOwnProperty("name")) {
-        browser.menus.update(`${obj.windowId}`, { title: mods.name }).then(
-            () => {
-                browser.menus.refresh().then((error) => logs.error(error))
-            },
-            (error) => {
+        browser.menus
+            .update(`${obj.windowId}`, { title: mods.name })
+            .then((error) => {
                 logs.error(error)
-            }
-        )
+            })
     }
 })
 backend.sessions.hook("deleting", function (primKey, obj, transaction) {
