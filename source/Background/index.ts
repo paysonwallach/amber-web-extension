@@ -12,6 +12,7 @@ import {
     CreateSessionRequest,
     CreateSessionResult,
     OpenSessionRequest,
+    OpenSessionRequestData,
     OpenSessionResult,
 } from "Common/Protocol"
 
@@ -271,7 +272,7 @@ hostConnector.instance.onMessage.addListener(async (message) => {
                 message,
                 OpenSessionRequest
             )
-            const data = yaml.load(request.data)
+            const data = yaml.load(request.data) as OpenSessionRequestData
 
             if ((session = await backend.sessions.get(data.uuid)) !== undefined)
                 return

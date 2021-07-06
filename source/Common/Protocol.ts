@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid"
 import { JsonProperty, Serializable } from "typescript-json-serializer"
+import { Tabs } from "webextension-polyfill-ts"
 
 export enum Method {
     Event = "event",
@@ -94,6 +95,13 @@ export class OpenSessionRequest extends Message {
     ) {
         super(Method.Open)
     }
+}
+
+export class OpenSessionRequestData {
+    constructor(
+        public readonly uuid: string,
+        public readonly tabs: Tabs.Tab[]
+    ) {}
 }
 
 @Serializable()
