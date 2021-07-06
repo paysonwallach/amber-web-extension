@@ -1,4 +1,4 @@
-import { browser, Runtime, Tabs } from "webextension-polyfill-ts"
+import { browser, Menus, Runtime, Tabs } from "webextension-polyfill-ts"
 import { v4 as uuidv4 } from "uuid"
 import { serialize, deserialize } from "typescript-json-serializer"
 import yaml from "js-yaml"
@@ -130,6 +130,58 @@ const onSessionChanged = (windowId: number, tabId: number | null = null) => {
             }
         )
 }
+
+const onSessionMenuItemClicked = (info: Menus.OnClickData, tab: Tabs.Tab) => {
+    browser.tabs.query({ highlighted: true, currentWindow: true }).then(
+        (tabs) => {
+            const tabIds: number[] = tabs
+                .filter((tab) => tab.id !== undefined)
+                .map((tab) => tab.id!)
+            const windowId =
+                typeof info.menuItemId === "string"
+                    ? parseInt(info.menuItemId)
+                    : info.menuItemId
+
+            if (windowId !== undefined)
+                browser.tabs.move(tabIds, { windowId: windowId, index: -1 })
+        },
+        (error) => {
+            logs.error(error)
+        }
+    )
+}
+
+browser.menus.create({
+    id: "move-to-session",
+    title: "Move to session",
+    contexts: ["tab"],
+})
+
+backend.sessions.hook("creating", function (primKey, obj, transaction) {
+    browser.menus.create({
+        id: `${obj.windowId}`,
+        title: obj.name ?? `Session ${obj.id}`,
+        contexts: ["tab"],
+        parentId: "move-to-session",
+        onclick: onSessionMenuItemClicked,
+    })
+})
+backend.sessions.hook("updating", function (mods: any, primKey, obj, trans) {
+    if (mods.hasOwnProperty("name")) {
+        browser.menus.update(`${obj.windowId}`, { title: mods.name }).then(
+            () => {
+                browser.menus.refresh().then((error) => logs.error(error))
+            },
+            (error) => {
+                logs.error(error)
+            }
+        )
+    }
+})
+backend.sessions.hook("deleting", function (primKey, obj, transaction) {
+    console.log(`id: ${obj.windowId}, name: ${obj.name}`)
+    browser.menus.remove(obj.id)
+})
 
 browser.windows.onRemoved.addListener((windowId) => {
     backend.sessions

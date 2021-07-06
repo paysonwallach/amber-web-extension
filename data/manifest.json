@@ -14,7 +14,7 @@
   "icons": {
     "128": "icon.svg"
   },
-  "permissions": ["nativeMessaging", "tabs", "<all_urls>", "storage"],
+  "permissions": ["menus", "nativeMessaging", "tabs", "<all_urls>", "storage"],
   "browser_action": {
     "default_icon": "icon.svg",
     "default_title": "Save Session",
