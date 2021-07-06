@@ -4,7 +4,7 @@ import { serialize, deserialize } from "typescript-json-serializer"
 import yaml from "js-yaml"
 
 import { Lazy } from "Utils/Lazy"
-import { Backend } from "Common/Backend"
+import { Backend, ISession } from "Common/Backend"
 import { Config } from "Common/Config"
 import logs from "Common/Logging"
 import {
@@ -206,6 +206,15 @@ browser.menus.create({
     id: "move-to-session",
     title: "Move to session",
     contexts: ["tab"],
+})
+backend.sessions.each((session: ISession) => {
+    browser.menus.create({
+        id: `${session.windowId}`,
+        title: `${session.name}`,
+        contexts: ["tab"],
+        parentId: "move-to-session",
+        onclick: onSessionMenuItemClicked,
+    })
 })
 
 backend.sessions.hook("creating", function (primKey, obj, transaction) {

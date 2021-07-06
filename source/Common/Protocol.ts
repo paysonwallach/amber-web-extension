@@ -83,6 +83,14 @@ export class CreateSessionResult extends Message {
     }
 }
 
+export class OpenSessionRequestData {
+    constructor(
+        public readonly autoSave: boolean,
+        public readonly uuid: string,
+        public readonly tabs: Tabs.Tab[]
+    ) {}
+}
+
 @Serializable()
 export class OpenSessionRequest extends Message {
     constructor(
@@ -95,13 +103,6 @@ export class OpenSessionRequest extends Message {
     ) {
         super(Method.Open)
     }
-}
-
-export class OpenSessionRequestData {
-    constructor(
-        public readonly uuid: string,
-        public readonly tabs: Tabs.Tab[]
-    ) {}
 }
 
 @Serializable()
