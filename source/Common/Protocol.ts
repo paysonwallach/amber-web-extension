@@ -136,3 +136,15 @@ export class OpenSessionResult extends Message {
         return new OpenSessionResult(context, undefined, error)
     }
 }
+
+@Serializable()
+export class UpdateSessionRequest extends Message {
+    public constructor(
+        @JsonProperty()
+        public readonly uri: string,
+        @JsonProperty()
+        public readonly data: string
+    ) {
+        super(Method.Update)
+    }
+}

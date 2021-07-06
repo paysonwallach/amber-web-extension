@@ -6,6 +6,7 @@ export interface ISession {
     uri?: string
     windowId: number
     tabs?: string[]
+    autoSave: boolean
 }
 
 export class Backend extends Dexie {
@@ -14,8 +15,8 @@ export class Backend extends Dexie {
     constructor() {
         super("com.paysonwallach.amber")
 
-        this.version(1).stores({
-            sessions: "id, name, uri, windowId, tabs",
+        this.version(2).stores({
+            sessions: "id, name, uri, windowId, tabs, autoSave",
         })
         this.sessions = this.table("sessions")
     }

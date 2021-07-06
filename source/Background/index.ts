@@ -14,6 +14,7 @@ import {
     OpenSessionRequest,
     OpenSessionRequestData,
     OpenSessionResult,
+    UpdateSessionRequest,
 } from "Common/Protocol"
 
 const backend = new Backend()
@@ -90,7 +91,32 @@ const onTabUpdated = (
         }
     )
 }
+const filter = (tabs: Tabs.Tab[]) => {
+    const allowed = [
+        "highlighted",
+        "active",
+        "attention",
+        "pinned",
+        "hidden",
+        "incognito",
+        "audible",
+        "mutedInfo",
+        "isArticle",
+        "isInReaderMode",
+        "url",
+        "title",
+    ]
 
+    return tabs.map((item) => {
+        return Object.keys(item)
+            .filter((key) => allowed.includes(key))
+            .reduce((obj: Record<string, unknown>, key) => {
+                // @ts-ignore
+                obj[key] = item[key]
+                return obj
+            }, {})
+    })
+}
 const onSessionChanged = (windowId: number, tabId: number | null = null) => {
     browser.windows
         .get(windowId, {
@@ -117,8 +143,31 @@ const onSessionChanged = (windowId: number, tabId: number | null = null) => {
                                 logs.debug(`clearing ${windowId}`)
                                 clearBadge(windowId)
                             } else {
-                                logs.debug(`setting ${windowId}`)
-                                setBadge(windowId)
+                                if (
+                                    session.autoSave &&
+                                    session.uri !== undefined
+                                ) {
+                                    backend.sessions.update(session.id, {
+                                        // @ts-ignore
+                                        tabs: message.tabs.map(
+                                            (tab) => tab.url
+                                        ),
+                                    })
+                                    const request = new UpdateSessionRequest(
+                                        session.uri,
+                                        yaml.dump({
+                                            uuid: session.id,
+                                            autoSave: session.autoSave,
+                                            tabs: filter(window.tabs!),
+                                        })
+                                    )
+                                    hostConnector.instance.postMessage(
+                                        serialize(request)
+                                    )
+                                } else {
+                                    logs.debug(`setting ${windowId}`)
+                                    setBadge(windowId)
+                                }
                             }
                         },
                         (error) => {
@@ -197,33 +246,24 @@ browser.windows.onRemoved.addListener((windowId) => {
 browser.runtime.onMessage.addListener(async (message, sender) => {
     if (sender.id != Config.EXTENSION_ID) return
 
-    let key: string
     const session = await backend.sessions.get({
         windowId: message.windowId,
     })
+    const key = session === undefined ? uuidv4() : session.id
 
-    if (session === undefined) {
-        key = uuidv4()
-        backend.sessions.add({
-            id: key,
-            windowId: message.windowId,
-            // @ts-ignore
-            tabs: message.tabs.map((tab) => tab.url),
-        })
-    } else {
-        key = session.id
-        backend.sessions.put({
-            id: key,
-            windowId: message.windowId,
-            // @ts-ignore
-            tabs: message.tabs.map((tab) => tab.url),
-        })
-    }
+    backend.sessions.put({
+        id: key,
+        windowId: message.windowId,
+        // @ts-ignore
+        tabs: message.tabs.map((tab) => tab.url),
+        autoSave: true,
+    })
 
     const request = new CreateSessionRequest(
         message.name,
         yaml.dump({
             uuid: key,
+            autoSave: true,
             tabs: message.tabs,
         })
     )
@@ -262,6 +302,7 @@ hostConnector.instance.onMessage.addListener(async (message) => {
                 uri: result.data.uri,
                 windowId: session.windowId,
                 tabs: session.tabs,
+                autoSave: session.autoSave,
             })
             pendingSessions.delete(result.context)
             watchSessions()
@@ -301,6 +342,7 @@ hostConnector.instance.onMessage.addListener(async (message) => {
                             windowId: windowInfo.id!,
                             // @ts-ignore
                             tabs: data.tabs.map((tab) => tab.url),
+                            autoSave: data.autoSave,
                         })
                         setWindowTitlePrefix(windowInfo.id!, request.name!)
                         watchSessions()
@@ -339,6 +381,7 @@ browser.windows
                             uri: session.uri,
                             windowId: window.id,
                             tabs: session.tabs,
+                            autoSave: session.autoSave,
                         })
                         watchSessions()
 
