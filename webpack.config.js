@@ -26,8 +26,7 @@ module.exports = {
   entry: {
     manifest: path.join(dataPath, "manifest.json"),
     background: path.join(sourcePath, "Background", "index.ts"),
-    popup: path.join(sourcePath, "Popup", "App.tsx"),
-    // options: path.join(sourcePath, "Options", "index.tsx"),
+    popup: path.join(sourcePath, "Popup", "index.tsx"),
   },
   output: {
     path: path.join(destPath, targetBrowser),
@@ -40,9 +39,6 @@ module.exports = {
       ),
       Common: path.join(sourcePath, "Common"),
       Popup: path.join(sourcePath, "Popup"),
-      // Options: path.join(
-      //   sourcePath, "Options"
-      // ),
       Utils: path.join(sourcePath, "Utils"),
     },
     extensions: [".ts", ".tsx", ".js", ".json"],
