@@ -227,8 +227,7 @@ backend.sessions.hook("updating", function (mods: any, primKey, obj, trans) {
     }
 })
 backend.sessions.hook("deleting", function (primKey, obj, transaction) {
-    console.log(`id: ${obj.windowId}, name: ${obj.name}`)
-    browser.menus.remove(obj.id)
+    browser.menus.remove(`${obj.windowId}`)
 })
 
 browser.windows.onRemoved.addListener((windowId) => {
