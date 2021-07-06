@@ -84,7 +84,7 @@ const onTabUpdated = (
     browser.tabs.get(tabId).then(
         (tab) => {
             if (tab.windowId !== undefined)
-                onSessionChanged(tabId, tab.windowId)
+                onSessionChanged(tab.windowId, tabId)
         },
         (error) => {
             logs.error(error)
