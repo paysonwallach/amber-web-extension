@@ -70,6 +70,7 @@ const onTabRemoved = (
     tabId: number,
     removeInfo: Tabs.OnRemovedRemoveInfoType
 ) => {
+    if (removeInfo.isWindowClosing) return
     logs.info(`tab ${tabId} removed`)
     onSessionChanged(removeInfo.windowId, tabId)
 }
