@@ -325,18 +325,23 @@ hostConnector.instance.onMessage.addListener(async (message) => {
                 return
 
             const tabs = data.tabs as Tabs.Tab[]
+            const activeTabIndex = tabs.findIndex((tab) => tab.active)
             browser.windows
                 .create({
-                    url: tabs[0].url,
+                    url: tabs[activeTabIndex].url,
                 })
                 .then(
                     (windowInfo) => {
-                        tabs.slice(1).forEach((tab) => {
+                        tabs.splice(activeTabIndex, 1)
+                        tabs.forEach((tab) => {
                             browser.tabs.create({
                                 url: tab.url,
-                                discarded: tab.active ? false : true,
+                                discarded: !tab.active,
                                 windowId: windowInfo.id,
                             })
+                        })
+                        browser.tabs.move(windowInfo.tabs![0].id!, {
+                            index: activeTabIndex,
                         })
                         hostConnector.instance.postMessage(
                             OpenSessionResult.withSuccess(request.id, true)
