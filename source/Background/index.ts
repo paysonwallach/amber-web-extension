@@ -92,6 +92,11 @@ const onTabUpdated = (
         }
     )
 }
+
+const supportedSchemes = ["http", "https", "ws", "wss", "ftp", "data", "file"]
+const supportedSchemesRegexp = new RegExp(
+    "^(?:" + supportedSchemes.join("|") + ")\\b"
+)
 const filter = (tabs: Tabs.Tab[]) => {
     const allowed = [
         "highlighted",
@@ -108,15 +113,20 @@ const filter = (tabs: Tabs.Tab[]) => {
         "title",
     ]
 
-    return tabs.map((item) => {
-        return Object.keys(item)
-            .filter((key) => allowed.includes(key))
-            .reduce((obj: Record<string, unknown>, key) => {
-                // @ts-ignore
-                obj[key] = item[key]
-                return obj
-            }, {})
-    })
+    return tabs
+        .filter(
+            (item) =>
+                item.url !== undefined && supportedSchemesRegexp.test(item.url)
+        )
+        .map((item) => {
+            return Object.keys(item)
+                .filter((key) => allowed.includes(key))
+                .reduce((obj: Record<string, unknown>, key) => {
+                    // @ts-ignore
+                    obj[key] = item[key]
+                    return obj
+                }, {})
+        })
 }
 const onSessionChanged = (windowId: number, tabId: number | null = null) => {
     browser.windows
