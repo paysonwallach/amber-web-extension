@@ -1,4 +1,10 @@
-import { browser, Menus, Runtime, Tabs } from "webextension-polyfill-ts"
+import {
+    browser,
+    Menus,
+    Runtime,
+    Tabs,
+    Windows,
+} from "webextension-polyfill-ts"
 import { v4 as uuidv4 } from "uuid"
 import { serialize, deserialize } from "typescript-json-serializer"
 import yaml from "js-yaml"
@@ -36,6 +42,39 @@ const arrayCompare = (array1: any[], array2: any[]): boolean => {
                 return value === array2Sorted[index]
             })
     )
+}
+
+const getEmptyWindow = (): Promise<Windows.Window> => {
+    return new Promise<Windows.Window>((resolve, reject) => {
+        browser.windows
+            .getAll({
+                populate: true,
+                windowTypes: ["normal"],
+            })
+            .then(
+                (windows) => {
+                    windows.forEach((window) => {
+                        if (
+                            window.tabs !== undefined &&
+                            window.tabs.length == 1 &&
+                            window.tabs[0].url !== undefined &&
+                            window.tabs[0].url == "about:blank"
+                        )
+                            resolve(window)
+                    })
+                },
+                (error) => {
+                    browser.windows
+                        .create({
+                            url: tabs[activeTabIndex].url,
+                        })
+                        .then(
+                            (windowInfo) => resolve(windowInfo),
+                            (error) => reject(error)
+                        )
+                }
+            )
+    })
 }
 
 const setBadge = (windowId: number, text: string | null = "!") => {
@@ -250,11 +289,12 @@ backend.sessions.hook("creating", function (primKey, obj, transaction) {
 })
 backend.sessions.hook("updating", function (mods: any, primKey, obj, trans) {
     if (mods.hasOwnProperty("name")) {
-        browser.menus
-            .update(`${obj.windowId}`, { title: mods.name })
-            .then((error) => {
+        browser.menus.update(`${obj.windowId}`, { title: mods.name }).then(
+            () => {},
+            (error) => {
                 logs.error(error)
-            })
+            }
+        )
     }
 })
 backend.sessions.hook("deleting", function (primKey, obj, transaction) {
@@ -348,45 +388,46 @@ hostConnector.instance.onMessage.addListener(async (message) => {
 
             const tabs = data.tabs as Tabs.Tab[]
             const activeTabIndex = tabs.findIndex((tab) => tab.active)
-            browser.windows
-                .create({
-                    url: tabs[activeTabIndex].url,
-                })
-                .then(
-                    (windowInfo) => {
-                        tabs.splice(activeTabIndex, 1)
-                        tabs.forEach((tab) => {
-                            browser.tabs.create({
-                                url: tab.url,
-                                discarded: !tab.active,
-                                windowId: windowInfo.id,
-                            })
+            getEmptyWindow().then(
+                (windowInfo) => {
+                    if (windowInfo.tabs![0].url == "about:blank")
+                        browser.tabs.update(windowInfo.tabs![0].id, {
+                            url: tabs[activeTabIndex].url,
                         })
-                        browser.tabs.move(windowInfo.tabs![0].id!, {
-                            index: activeTabIndex,
+
+                    tabs.splice(activeTabIndex, 1)
+                    tabs.forEach((tab) => {
+                        browser.tabs.create({
+                            url: tab.url,
+                            discarded: !tab.active,
+                            windowId: windowInfo.id,
                         })
-                        hostConnector.instance.postMessage(
-                            OpenSessionResult.withSuccess(request.id, true)
-                        )
-                        backend.sessions.add({
-                            id: data.uuid,
-                            name: request.name,
-                            uri: request.uri,
-                            windowId: windowInfo.id!,
-                            // @ts-ignore
-                            tabs: data.tabs.map((tab) => tab.url),
-                            autoSave: data.autoSave,
-                        })
-                        setWindowTitlePrefix(windowInfo.id!, request.name!)
-                        watchSessions()
-                    },
-                    (error) => {
-                        logs.error(error)
-                        hostConnector.instance.postMessage(
-                            OpenSessionResult.withError(request.id, error)
-                        )
-                    }
-                )
+                    })
+                    browser.tabs.move(windowInfo.tabs![0].id!, {
+                        index: activeTabIndex,
+                    })
+                    hostConnector.instance.postMessage(
+                        OpenSessionResult.withSuccess(request.id, true)
+                    )
+                    backend.sessions.add({
+                        id: data.uuid,
+                        name: request.name,
+                        uri: request.uri,
+                        windowId: windowInfo.id!,
+                        // @ts-ignore
+                        tabs: data.tabs.map((tab) => tab.url),
+                        autoSave: data.autoSave,
+                    })
+                    setWindowTitlePrefix(windowInfo.id!, request.name!)
+                    watchSessions()
+                },
+                (error) => {
+                    logs.error(error)
+                    hostConnector.instance.postMessage(
+                        OpenSessionResult.withError(request.id, error)
+                    )
+                }
+            )
     }
 })
 browser.windows
