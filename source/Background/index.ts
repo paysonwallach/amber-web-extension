@@ -154,27 +154,39 @@ const onSessionChanged = (windowId: number, tabId: number | null = null) => {
                                 logs.debug(`clearing ${windowId}`)
                                 clearBadge(windowId)
                             } else {
-                                if (
-                                    session.autoSave &&
-                                    session.uri !== undefined
-                                ) {
-                                    backend.sessions.update(session.id, {
-                                        // @ts-ignore
-                                        tabs: message.tabs.map(
-                                            (tab) => tab.url
-                                        ),
-                                    })
-                                    const request = new UpdateSessionRequest(
-                                        session.uri,
-                                        yaml.dump({
-                                            uuid: session.id,
-                                            autoSave: session.autoSave,
-                                            tabs: filter(window.tabs!),
+                                if (session.autoSave) {
+                                    backend.sessions
+                                        .update(session.id, {
+                                            // @ts-ignore
+                                            tabs: window.tabs.map(
+                                                (tab) => tab.url
+                                            ),
                                         })
-                                    )
-                                    hostConnector.instance.postMessage(
-                                        serialize(request)
-                                    )
+                                        .then(
+                                            (updated) => {
+                                                if (session.uri === undefined)
+                                                    return
+
+                                                const request =
+                                                    new UpdateSessionRequest(
+                                                        session.uri,
+                                                        yaml.dump({
+                                                            uuid: session.id,
+                                                            autoSave:
+                                                                session.autoSave,
+                                                            tabs: filter(
+                                                                window.tabs!
+                                                            ),
+                                                        })
+                                                    )
+                                                hostConnector.instance.postMessage(
+                                                    serialize(request)
+                                                )
+                                            },
+                                            (error) => {
+                                                logs.error(error)
+                                            }
+                                        )
                                 } else {
                                     logs.debug(`setting ${windowId}`)
                                     setBadge(windowId)
@@ -272,14 +284,14 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
         windowId: message.windowId,
         // @ts-ignore
         tabs: message.tabs.map((tab) => tab.url),
-        autoSave: true,
+        autoSave: message.autoSave,
     })
 
     const request = new CreateSessionRequest(
         message.name,
         yaml.dump({
             uuid: key,
-            autoSave: true,
+            autoSave: message.autoSave,
             tabs: message.tabs,
         })
     )

@@ -6,6 +6,12 @@ import { browser, Tabs } from "webextension-polyfill-ts"
 import { SessionForm } from "Popup/SessionForm"
 import { Config } from "Common/Config"
 import { Backend } from "Common/Backend"
+import optionsStorage from "Common/Options"
+
+interface PopupIProps {
+    initialName: string
+    intialAutoSave: boolean
+}
 
 const supportedSchemes = ["http", "https", "ws", "wss", "ftp", "data", "file"]
 const supportedSchemesRegexp = new RegExp(
@@ -43,8 +49,9 @@ const filter = (tabs: Tabs.Tab[]) => {
         })
 }
 
-function Popup() {
-    const [name, setName] = React.useState(String.Empty)
+const Popup = (props: PopupIProps) => {
+    const [name, setName] = React.useState(props.initialName)
+    const [autoSave, setAutoSave] = React.useState(props.intialAutoSave)
     const activityIndicatorContainer =
         document.getElementById("activity-indicator")!
     const popupContainer = document.getElementById("popup")!
@@ -60,6 +67,7 @@ function Popup() {
                         name: name,
                         windowId: windowInfo.id,
                         tabs: filter(tabs),
+                        autoSave: autoSave,
                     })
                 })
             })
@@ -69,31 +77,46 @@ function Popup() {
     ): void => {
         setName(event.target.value)
     }
+    const handleAutoSaveStateChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ): void => {
+        setAutoSave(!autoSave)
+    }
 
     browser.runtime.onMessage.addListener((message, sender) => {
         if (sender.id != Config.EXTENSION_ID) return
         if (message == "close") window.close()
     })
-    browser.windows.getCurrent().then(async (window) => {
-        if (window.id === undefined) return
 
+    return (
+        <SessionForm
+            name={name}
+            autoSave={autoSave}
+            onSessionNameChange={handleSessionNameChange}
+            onAutoSaveStateChange={handleAutoSaveStateChange}
+            onSubmit={handleSubmit}
+        />
+    )
+}
+
+browser.windows.getCurrent().then(async (window) => {
+    let autoSave = (await optionsStorage.getAll()).autoSave
+    let name: string = String.Empty
+    if (window.id !== undefined) {
         const db = new Backend()
         const session = await db.sessions.get({
             windowId: window.id,
         })
 
-        if (session === undefined || session.name === undefined) return
+        if (session !== undefined && session.autoSave !== undefined)
+            autoSave = session.autoSave
 
-        setName(session.name)
-    })
+        if (session !== undefined && session.name !== undefined)
+            name = session.name
+    }
 
-    return (
-        <SessionForm
-            name={name}
-            onSubmit={handleSubmit}
-            onSessionNameChange={handleSessionNameChange}
-        />
+    ReactDOM.render(
+        <Popup initialName={name} intialAutoSave={autoSave} />,
+        document.getElementById("popup")
     )
-}
-
-ReactDOM.render(<Popup />, document.getElementById("popup"))
+})

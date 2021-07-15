@@ -1,0 +1,18 @@
+body {
+  color: #0c0c0d;
+  background-color: #fff;
+  margin: 12px;
+}
+
+input {
+  margin: 8px 0;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #fff;
+    background-color: #202023;
+  }
+}

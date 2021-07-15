@@ -26,6 +26,7 @@ module.exports = {
   entry: {
     manifest: path.join(dataPath, "manifest.json"),
     background: path.join(sourcePath, "Background", "index.ts"),
+    options: path.join(sourcePath, "Options", "index.tsx"),
     popup: path.join(sourcePath, "Popup", "index.tsx"),
   },
   output: {
@@ -38,6 +39,7 @@ module.exports = {
         path.join(__dirname, "node_modules", "webextension-polyfill-ts")
       ),
       Common: path.join(sourcePath, "Common"),
+      Options: path.join(sourcePath, "Options"),
       Popup: path.join(sourcePath, "Popup"),
       Utils: path.join(sourcePath, "Utils"),
     },
