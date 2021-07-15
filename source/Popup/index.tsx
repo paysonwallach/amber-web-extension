@@ -57,6 +57,8 @@ const Popup = (props: PopupIProps) => {
     const popupContainer = document.getElementById("popup")!
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
+        event.preventDefault()
+
         popupContainer.classList.add("disabled")
         activityIndicatorContainer.style.visibility = "visible"
         browser.tabs
