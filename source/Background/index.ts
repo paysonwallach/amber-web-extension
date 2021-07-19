@@ -44,39 +44,6 @@ const arrayCompare = (array1: any[], array2: any[]): boolean => {
     )
 }
 
-const getEmptyWindow = (): Promise<Windows.Window> => {
-    return new Promise<Windows.Window>((resolve, reject) => {
-        browser.windows
-            .getAll({
-                populate: true,
-                windowTypes: ["normal"],
-            })
-            .then(
-                (windows) => {
-                    windows.forEach((window) => {
-                        if (
-                            window.tabs !== undefined &&
-                            window.tabs.length == 1 &&
-                            window.tabs[0].url !== undefined &&
-                            window.tabs[0].url == "about:blank"
-                        )
-                            resolve(window)
-                    })
-                },
-                (error) => {
-                    browser.windows
-                        .create({
-                            url: tabs[activeTabIndex].url,
-                        })
-                        .then(
-                            (windowInfo) => resolve(windowInfo),
-                            (error) => reject(error)
-                        )
-                }
-            )
-    })
-}
-
 const setBadge = (windowId: number, text: string | null = "!") => {
     browser.browserAction.setBadgeText({
         text: text,
@@ -388,46 +355,64 @@ hostConnector.instance.onMessage.addListener(async (message) => {
 
             const tabs = data.tabs as Tabs.Tab[]
             const activeTabIndex = tabs.findIndex((tab) => tab.active)
-            getEmptyWindow().then(
-                (windowInfo) => {
-                    if (windowInfo.tabs![0].url == "about:blank")
-                        browser.tabs.update(windowInfo.tabs![0].id, {
-                            url: tabs[activeTabIndex].url,
-                        })
 
-                    tabs.splice(activeTabIndex, 1)
-                    tabs.forEach((tab) => {
-                        browser.tabs.create({
-                            url: tab.url,
-                            discarded: !tab.active,
-                            windowId: windowInfo.id,
-                        })
-                    })
-                    browser.tabs.move(windowInfo.tabs![0].id!, {
-                        index: activeTabIndex,
-                    })
-                    hostConnector.instance.postMessage(
-                        OpenSessionResult.withSuccess(request.id, true)
+            try {
+                let windowInfo: Windows.Window | null = null
+                const windows = await browser.windows.getAll({
+                    populate: true,
+                    windowTypes: ["normal"],
+                })
+                windows.forEach((window) => {
+                    if (
+                        window.tabs !== undefined &&
+                        window.tabs.length == 1 &&
+                        window.tabs[0].url !== undefined &&
+                        window.tabs[0].url == "about:blank"
                     )
-                    backend.sessions.add({
-                        id: data.uuid,
-                        name: request.name,
-                        uri: request.uri,
-                        windowId: windowInfo.id!,
-                        // @ts-ignore
-                        tabs: data.tabs.map((tab) => tab.url),
-                        autoSave: data.autoSave,
+                        windowInfo = window
+                })
+
+                if (windowInfo == null)
+                    windowInfo = await browser.windows.create({
+                        url: tabs[activeTabIndex].url,
                     })
-                    setWindowTitlePrefix(windowInfo.id!, request.name!)
-                    watchSessions()
-                },
-                (error) => {
-                    logs.error(error)
-                    hostConnector.instance.postMessage(
-                        OpenSessionResult.withError(request.id, error)
-                    )
-                }
-            )
+
+                if (windowInfo.tabs![0].url == "about:blank")
+                    browser.tabs.update(windowInfo.tabs![0].id, {
+                        url: tabs[activeTabIndex].url,
+                    })
+
+                tabs.splice(activeTabIndex, 1)
+                tabs.forEach((tab) => {
+                    browser.tabs.create({
+                        url: tab.url,
+                        discarded: !tab.active,
+                        windowId: windowInfo!.id,
+                    })
+                })
+                browser.tabs.move(windowInfo.tabs![0].id!, {
+                    index: activeTabIndex,
+                })
+                hostConnector.instance.postMessage(
+                    OpenSessionResult.withSuccess(request.id, true)
+                )
+                backend.sessions.add({
+                    id: data.uuid,
+                    name: request.name,
+                    uri: request.uri,
+                    windowId: windowInfo.id!,
+                    // @ts-ignore
+                    tabs: data.tabs.map((tab) => tab.url),
+                    autoSave: data.autoSave,
+                })
+                setWindowTitlePrefix(windowInfo.id!, request.name!)
+                watchSessions()
+            } catch (error) {
+                logs.error(error)
+                hostConnector.instance.postMessage(
+                    OpenSessionResult.withError(request.id, error)
+                )
+            }
     }
 })
 browser.windows
