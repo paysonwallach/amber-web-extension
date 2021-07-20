@@ -42,7 +42,6 @@ const filter = (tabs: Tabs.Tab[]) => {
             return Object.keys(item)
                 .filter((key) => allowed.includes(key))
                 .reduce((obj: Record<string, unknown>, key) => {
-                    // @ts-ignore
                     obj[key] = item[key]
                     return obj
                 }, {})

@@ -128,7 +128,6 @@ const filter = (tabs: Tabs.Tab[]) => {
             return Object.keys(item)
                 .filter((key) => allowed.includes(key))
                 .reduce((obj: Record<string, unknown>, key) => {
-                    // @ts-ignore
                     obj[key] = item[key]
                     return obj
                 }, {})
@@ -163,7 +162,6 @@ const onSessionChanged = (windowId: number, tabId: number | null = null) => {
                                 if (session.autoSave) {
                                     backend.sessions
                                         .update(session.id, {
-                                            // @ts-ignore
                                             tabs: window.tabs.map(
                                                 (tab) => tab.url
                                             ),
@@ -289,7 +287,6 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
     backend.sessions.put({
         id: key,
         windowId: message.windowId,
-        // @ts-ignore
         tabs: message.tabs.map((tab) => tab.url),
         autoSave: message.autoSave,
     })
@@ -401,7 +398,6 @@ hostConnector.instance.onMessage.addListener(async (message) => {
                     name: request.name,
                     uri: request.uri,
                     windowId: windowInfo.id!,
-                    // @ts-ignore
                     tabs: data.tabs.map((tab) => tab.url),
                     autoSave: data.autoSave,
                 })
@@ -453,5 +449,4 @@ browser.windows
             logs.error(error)
         }
     )
-// @ts-ignore
 hostConnector.instance.postMessage()
