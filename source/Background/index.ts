@@ -243,7 +243,6 @@ backend.sessions.each((session: ISession) => {
     })
 })
 
-backend.sessions.hook("creating", function (primKey, obj, transaction) {
     browser.menus.create({
         id: `${obj.windowId}`,
         title: obj.name ?? `Session ${obj.id}`,
@@ -251,8 +250,9 @@ backend.sessions.hook("creating", function (primKey, obj, transaction) {
         parentId: "move-to-session",
         onclick: onSessionMenuItemClicked,
     })
+backend.sessions.hook("creating", (primKey, obj, transaction) => {
 })
-backend.sessions.hook("updating", function (mods: any, primKey, obj, trans) {
+backend.sessions.hook("updating", (mods: any, primKey, obj, trans) => {
     if (mods.hasOwnProperty("name")) {
         try {
             browser.menus.update(`${obj.windowId}`, { title: mods.name })
@@ -261,8 +261,8 @@ backend.sessions.hook("updating", function (mods: any, primKey, obj, trans) {
         }
     }
 })
-backend.sessions.hook("deleting", function (primKey, obj, transaction) {
     browser.menus.remove(`${obj.windowId}`)
+backend.sessions.hook("deleting", (primKey, obj, transaction) => {
 })
 
 browser.windows.onRemoved.addListener((windowId) => {
