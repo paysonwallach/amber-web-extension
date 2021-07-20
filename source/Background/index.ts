@@ -351,7 +351,9 @@ hostConnector.instance.onMessage.addListener(async (message) => {
                 return
 
             const tabs = data.tabs as Tabs.Tab[]
-            const activeTabIndex = tabs.findIndex((tab) => tab.active)
+
+            let activeTabIndex = tabs.findIndex((tab) => tab.active)
+            if (activeTabIndex == -1) activeTabIndex = 0
 
             try {
                 let windowInfo: Windows.Window | null = null
