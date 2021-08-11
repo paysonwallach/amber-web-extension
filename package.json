@@ -33,7 +33,7 @@
     "watch": "webpack --mode=development --watch"
   },
   "dependencies": {
-    "@babel/runtime": "^7.14.8",
+    "@babel/runtime": "^7.15.3",
     "@reduxjs/toolkit": "^1.6.1",
     "dexie": "^3.0.3",
     "js-yaml": "^4.1.0",
@@ -59,7 +59,7 @@
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
     "@types/js-yaml": "^4.0.2",
-    "@types/react": "^17.0.16",
+    "@types/react": "^17.0.17",
     "@types/react-dom": "^17.0.9",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
