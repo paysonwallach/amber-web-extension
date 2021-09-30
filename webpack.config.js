@@ -3,7 +3,7 @@ const path = require("path");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const SizePlugin = require("size-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const WextManifestWebpackPlugin = require("wext-manifest-webpack-plugin");
@@ -22,6 +22,9 @@ module.exports = {
     builtAt: true,
     errors: true,
     hash: true,
+  },
+  experiments: {
+    topLevelAwait: true,
   },
   entry: {
     manifest: path.join(dataPath, "manifest.json"),
@@ -122,11 +125,7 @@ module.exports = {
           },
         },
       }),
-      new OptimizeCSSAssetsPlugin({
-        cssProcessorPluginOptions: {
-          preset: ["default", { discardComments: { removeAll: true } }],
-        },
-      }),
+      new CssMinimizerPlugin(),
     ],
   },
 };
