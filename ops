@@ -1,0 +1,1 @@
+{"version":1,"ops":[{"type":1,"author":{"id":"39dc8866ba5944833403be7f62b6e3787897b572"},"timestamp":1640959923,"title":"Automatic Session Creation","message":"Prompt the user to create a session upon each new window opened, unless a saved session is being restored. Allow for a scratch session to be created under the XDG shared directory as well?","files":null}]}
